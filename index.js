@@ -13,7 +13,7 @@ try  {
     const commitUser = core.getInput('commitUser');
     const commitEmail = core.getInput('commitEmail');
     const configRepoName = core.getInput('configRepoName');
-    const branch = core.getInput('branch');
+    const ref = core.getInput('ref');
 
     console.log("Started removing files in current directory");
     exec(`rm -rf /home/runner/workspace/${configRepoName}/${configRepoName}/*`, (err, stdout, stderr) => {
@@ -67,7 +67,7 @@ try  {
                         console.log(stdout);
                         console.log(stderr);
                         console.log("Completed git remote add origin");
-                        exec(`git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin +refs/heads/${branch}*:refs/remotes/origin/${branch}* +refs/tags/${branch}*:refs/tags/${branch}*`, (err, stdout, stderr) => {
+                        exec(`git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules origin`, (err, stdout, stderr) => {
                             if (err) {
                                 console.log(err);
                                 core.setOutput("choreo-status", "failed");
@@ -77,28 +77,17 @@ try  {
                             console.log(stdout);
                             console.log(stderr);
                             console.log("Completed git fetch");
-                            exec(`git branch --list --remote origin/${branch}`, (err, stdout, stderr) => {
+                            exec(`git checkout ${ref}`, (err, stdout, stderr) => {
                                 if (err) {
                                     console.log(err);
                                     core.setOutput("choreo-status", "failed");
                                     core.setFailed(err.message);
                                     return;
                                 }
-                                console.log("branches");
-                                console.log("branches" + stdout);
+                                console.log("ref");
+                                console.log("ref" + stdout);
                                 console.log(stderr);
-                                console.log("Completed git branch --list --remote");
-                                exec(`git checkout --progress --force -B ${branch} refs/remotes/origin/${branch}`, (err, stdout, stderr) => {
-                                    if (err) {
-                                        console.log(err);
-                                        core.setOutput("choreo-status", "failed");
-                                        core.setFailed(err.message);
-                                        return;
-                                    }
-                                    console.log(stdout);
-                                    console.log(stderr);
-                                    console.log("Completed checkout to bitbucket repo");
-                                });
+                                console.log("Completed checkout to bitbucket repo");
                             });
                         });
                     });
