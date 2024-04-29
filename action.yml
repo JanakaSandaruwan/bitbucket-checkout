@@ -23,9 +23,9 @@ inputs:
   configRepoName:
     required: true
     description: 'The name of the config repository'
-  branch:
+  ref:
     required: true
-    description: 'The branch of the user repository which going to push changes'
+    description: 'The commit sha or branch of the user repository which going to be checked out'
   commitUser:
     required: true
     description: 'The username of the user who is going to commit'
